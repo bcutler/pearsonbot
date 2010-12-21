@@ -3,6 +3,13 @@
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 
+import os
+#ROOT : the django proyect root
+ROOT = lambda base : os.path.join(os.path.dirname(__file__), base).replace('\\','/')
+
+#DATABASE_NAME = ROOT('data/mydb.db')
+
+
 ADMINS = (
     # ('Your Name', 'your_email@domain.com'),
 )
@@ -52,7 +59,7 @@ MEDIA_ROOT = ''
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 MEDIA_URL = ''
 
-STATIC_DOC_ROOT = "/Users/hamiltonulmer/Code/mozilla/survey/PearsonBot/templates/public"
+STATIC_DOC_ROOT = ROOT("templates/public")
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -80,7 +87,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'PearsonBot.urls'
 
 TEMPLATE_DIRS = (
-	"/Users/hamiltonulmer/Code/mozilla/survey/PearsonBot/templates"
+	ROOT("templates")
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
