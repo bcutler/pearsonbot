@@ -1,0 +1,51 @@
+<html>
+
+<head>
+	<title>{% block title %} PearsonBot - Bzzzt {% endblock %}</title>
+	<link rel="stylesheet" href="/site_media/style.css" />
+</head>
+
+<body>
+
+<div id="container">
+
+<div id="title">
+	<h1 id="header">Pearson-Bot</h1>
+	<h2 id="header">Peeling polygons off the hypershape of opinion - bzzzt!!!</h2>
+</div>
+<hr>
+
+<div id="nav">
+<ul>
+	<li><a href="#">contingency</a></li>
+	<li>&#9642;</li>
+	<li><a href="#">vs. time of day</a></li>
+	<li>&#9642;</li>
+	<li><a href="#">vs. number of sessions</a></li>
+</ul>
+</div>
+
+<div id="content">
+
+<table id="compare">
+	<tr>
+		<td>Compare:</td>{% for g in groups %} <td class="compare">{{ g }}</td>{% endfor %}
+	</tr>
+	<tr>
+		<td>With:</td>{% for g in groups %} <td class="with">{{ g }}</td>{% endfor %}
+	</tr>
+	
+</table>
+
+{% block content %}{% endblock %}
+
+</div>
+
+<div id="footer">
+	<hr>
+	A Test Pilot + Metrics love child. 2010.
+</div>
+
+</div>
+</body>
+</html>

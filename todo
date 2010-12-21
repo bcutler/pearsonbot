@@ -1,0 +1,10 @@
+backend
+- get prototype data for backend stuff
+- create scripts that makes it easy to take our db and outputs a contingency table
+
+frontend
+- work out the logic to get json object with table defs and other data
+
+plotting
+- work out primary partition of data, horizontally.  3 groups should have three big columns.
+
