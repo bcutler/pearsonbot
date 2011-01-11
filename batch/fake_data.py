@@ -25,6 +25,12 @@ contingency = [
 	[1,4, 5],
 	[2,3, 12],
 	[2,4, 53],
+	[3,0, 10],
+	[4,0, 20],
+	[3,1, 30],
+	[4,1, 5],
+	[3,2, 12],
+	[4,2, 53],
 ]
 
 c.executemany('''INSERT INTO responses values(?,?,?,?);''', responses)
