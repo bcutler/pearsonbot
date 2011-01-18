@@ -8,6 +8,8 @@ from django.conf import settings
 urlpatterns = patterns('',
 	(r'pearson/$', 'contingency.views.index'),
 	(r'pearson/compare/$', 'contingency.views.compare_with'),
+	(r'tod/fetch_results/?', 'time_of_day.views.fetch_results'),
+	(r'tod/?', 'time_of_day.views.index'),
 	(r'^site_media/(?P<path>.*)/$', 'django.views.static.serve',
 	        {'document_root': settings.STATIC_DOC_ROOT}),
     # Example:

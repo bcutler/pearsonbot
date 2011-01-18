@@ -172,6 +172,15 @@ p {
 	padding-bottom:.5em;
 }
 
+#content li:hover {
+	list-style-type:disc;
+}
+
+a.activator {
+	color:black;
+	font-variant:normal;
+}
+
 .quoter {
 	font-style:normal;
 	color:black;
@@ -220,4 +229,23 @@ a {
 
 a:hover {
 	text-decoration:underline;
+}
+
+td {
+	color:gray;
+}
+
+.compare_clicked {
+	color:black;
+	font-variant:normal;
+}
+
+.with_clicked {
+	color:black;
+	font-variant:normal;
+}
+
+.with_unavailable {
+	color:lightgray;
+	font-variant:normal;
 }

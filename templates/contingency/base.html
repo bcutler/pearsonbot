@@ -3,6 +3,8 @@
 <head>
 	<title>{% block title %} PearsonBot - Bzzzt {% endblock %}</title>
 	<link rel="stylesheet" href="/site_media/style.css" />
+	<script src="/site_media/jquery.js"></script>
+	<script type="text/javascript" src="/site_media/protovis.js"></script>
 </head>
 
 <body>
@@ -29,13 +31,17 @@
 
 <table id="compare">
 	<tr>
-		<td>Compare:</td>{% for g in groups %} <td class="compare">{{ g }}</td>{% endfor %}
+		<td>Compare</td>{% for g in groups %} <td id="{{ g }}" class="compare">{{ g }}</td>{% endfor %}
 	</tr>
 	<tr>
-		<td>With:</td>{% for g in groups %} <td class="with">{{ g }}</td>{% endfor %}
+		<td>With</td>{% for g in groups %} <td id="{{ g }}" class="with">{{ g }}</td>{% endfor %}
 	</tr>
 	
 </table>
+
+<div id="contents"></div>
+
+<div id="output" class="output"></div>
 
 {% block content %}{% endblock %}
 
@@ -45,6 +51,154 @@
 	<hr>
 	A Test Pilot + Metrics love child. 2010.
 </div>
+
+<script type="text/javascript+protovis">
+	
+	var current_compare = null;
+	var current_with = null;
+	
+	
+	tm = function(data){
+		var vis = new pv.Panel()
+			.width(500)
+			.height(500)
+			.canvas("output");
+		var treemap = vis.add(pv.Layout.Treemap)
+			.nodes(data);
+		treemap.leaf.add(pv.Panel)
+			.strokeStyle("#fff")
+			.lineWidth(1)
+			.antialias(false);
+		return vis;
+	}
+	
+	barchart = function(d){
+		data = d.data;
+		
+		
+		var n = data.length;
+		var m = data[0].length;
+		
+		var maxd = 0;
+		
+		var rl = d.labels.row_labels;
+		
+		for (var i in data) {
+			for (var j in data[i]) {
+				if (data[i][j] > maxd) {
+					maxd = data[i][j];
+				}
+			}
+		}
+		var w = 400,
+		    h = 250,
+		    x = pv.Scale.linear(0, maxd).range(0, w),
+		    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 4/5);
+		var vis = new pv.Panel()
+			.width(w)
+			.height(h)
+			.bottom(20)
+			.left(60)
+			.right(10)
+			.top(5)
+			.canvas("output");
+			var bar = vis.add(pv.Panel)
+			    .data(data)
+			    .top(function() y(this.index))
+			    .height(y.range().band)
+			  .add(pv.Bar)
+			    .data(function(d) d)
+			    .top(function() this.index * y.range().band / m)
+			    .height(y.range().band / m)
+			    .left(0)
+			    .width(x)
+			    .fillStyle(pv.Colors.category20().by(pv.index));
+
+			/* The value label. */
+			bar.anchor("right").add(pv.Label)
+			    .textStyle("white")
+			    .text(function(d) d.toFixed(1));
+
+			/* The variable label. */
+			bar.parent.anchor("left").add(pv.Label)
+			    .textAlign("right")
+			    .textMargin(5)
+			    .text(function() rl[this.parent.index]);
+
+			/* X-axis ticks. */
+			vis.add(pv.Rule)
+			    .data(x.ticks(5))
+			    .left(x)
+			    .strokeStyle(function(d) d ? "rgba(255,255,255,.3)" : "#000")
+			  .add(pv.Rule)
+			    .bottom(0)
+			    .height(5)
+			    .strokeStyle("#000")
+			  .anchor("bottom").add(pv.Label)
+			    .text(x.tickFormat);
+		return vis;
+	}
+	
+	submit_comparison = function(compare_term, with_term){
+		$.ajax(
+			{
+				type: 'GET',
+				cache: false,
+				data: {"term1" : compare_term, "term2" : with_term},
+				url: "http://127.0.0.1:8000/pearson/compare/",
+				beforeSend: function(){},
+				success: function(data){
+					
+					data = $.parseJSON(data);
+					//$("#contents").html("WHAT  " + data.mac.male);
+					//console.log("Got data. " + data["os"] + data["gender"]);
+					//console.log(data);
+					vis = barchart(data);
+					
+					vis.render();
+				}
+			}
+		)
+	}
+	
+	$(".compare").click(function(){
+		//alert("hi " + $(this).html());
+		// remove the old current_compare.
+		if (current_compare) {
+			$(".compare_clicked").removeClass("compare_clicked");
+		}
+		// If with_clicked has the same ID, then remove with_clicked.
+		// Get content of function.
+		current_compare = $(this).attr("id");
+		if (current_compare == $(".with_clicked").attr("id")){
+			$(".with_clicked").removeClass("with_clicked");
+		}
+		current_with = $(".with_clicked").attr("id");
+		// Add the proper class in compare and remove in with.
+		
+		$(this).addClass("compare_clicked");
+		
+		if (current_with != undefined & current_compare != undefined) {
+			submit_comparison(current_compare, current_with);
+		}
+	})
+	$(".with").click(function(){
+		if (current_with){
+			$(".with_clicked").removeClass("with_clicked");
+		}
+		current_with = $(this).attr("id");
+		//console.log(current_with);
+		if (current_with == $(".compare_clicked").attr("id")){
+			$(".compare_clicked").removeClass("compare_clicked");
+		}
+		$(this).addClass("with_clicked");
+		current_compare = $(".compare_clicked").attr("id");
+		if (current_with != undefined & current_compare != undefined) {
+			submit_comparison(current_compare, current_with);
+		}
+	});
+	
+</script>
 
 </div>
 </body>
