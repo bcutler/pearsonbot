@@ -1,10 +1,10 @@
 <html>
 
 <head>
-	<title>{% block title %} PearsonBot - Bzzzt {% endblock %}</title>
-	<link rel="stylesheet" href="/site_media/style.css" />
-	<script src="/site_media/jquery.js"></script>
-	<script type="text/javascript" src="/site_media/protovis.js"></script>
+	<title>PearsonBot - BZZZT!</title>
+	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+	<script src="{{ url_for('static', filename='jquery.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='protovis.js') }}"></script>
 </head>
 
 <body>
@@ -17,15 +17,6 @@
 </div>
 <hr>
 
-<div id="nav">
-<ul>
-	<li><a href="#">contingency</a></li>
-	<li>&#9642;</li>
-	<li><a href="#">vs. time of day</a></li>
-	<li>&#9642;</li>
-	<li><a href="#">vs. number of sessions</a></li>
-</ul>
-</div>
 
 <div id="content">
 
@@ -106,7 +97,19 @@
 		var maxd = 0;
 		
 		var rl = d.labels.row_labels;
+		var cl = d.labels.col_labels;
 		
+		rl2 = [];
+		for (var r in rl) {
+			rl2.push(r);
+		}
+		
+		cl2 = [];
+		for (var c in cl) {
+			cl2.push(c);
+		}
+		
+		//console.log(rl2);
 		for (var i in data) {
 			for (var j in data[i]) {
 				if (data[i][j] > maxd) {
@@ -114,10 +117,11 @@
 				}
 			}
 		}
-		var w = 400,
+		var w = 500,
 		    h = 250,
 		    x = pv.Scale.linear(0, maxd).range(0, w),
-		    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 4/5);
+		    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 4/5),
+		    c = pv.Colors.category20();
 		var vis = new pv.Panel()
 			.width(w)
 			.height(h)
@@ -136,7 +140,7 @@
 			    .height(y.range().band / m)
 			    .left(0)
 			    .width(x)
-			    .fillStyle(pv.Colors.category20().by(pv.index));
+			    .fillStyle(c.by(pv.index));
 
 			/* The value label. */
 			bar.anchor("right").add(pv.Label)
@@ -147,7 +151,7 @@
 			bar.parent.anchor("left").add(pv.Label)
 			    .textAlign("right")
 			    .textMargin(5)
-			    .text(function() rl[this.parent.index]);
+			    .text(function() rl2[this.parent.index]);
 
 			/* X-axis ticks. */
 			vis.add(pv.Rule)
@@ -160,6 +164,36 @@
 			    .strokeStyle("#000")
 			  .anchor("bottom").add(pv.Label)
 			    .text(x.tickFormat);
+			
+			// /* Bar labels, v.1. */
+			// 			bar.anchor("right").add(pv.Label)
+			// 				.textAlign("left")
+			// 				.textMargin(5)
+			// 				.text(function() cl2[this.index]);
+			
+			vis.add(pv.Dot)
+				.data(data[0])
+				.right(5)
+				.top(function() 15 + this.index * 15) 
+				.size(20)
+				.strokeStyle(null)
+				.fillStyle(c.by(pv.index))
+				.anchor("left").add(pv.Label)
+					.text(function() cl2[this.index]);
+				
+			
+			// vis.anchor("right").add(pv.Label)
+			// 			.right(10)
+			// 			.top(function() this.parent.index * 12 + 10)
+			// 			.text(function() "hello");
+			
+			  // vis.add(pv.Dot)
+			  // 		          .right(10)
+			  // 		          .top(function() this.parent.index * 12 + 10)
+			  // 		          .fillStyle(function(d) c(d.key))
+			  // 		          .strokeStyle(null)
+			  // 		        .anchor("left").add(pv.Label)
+			  // 		          .text(function(d) d.key);
 		return vis;
 	}
 	
@@ -169,7 +203,7 @@
 				type: 'GET',
 				cache: false,
 				data: {"term1" : compare_term, "term2" : with_term},
-				url: "http://127.0.0.1:8000/pearson/compare/",
+				url: "{{ url_for('compare') }}",
 				beforeSend: function(){},
 				success: function(data){
 					
@@ -179,8 +213,8 @@
 					//console.log(data);
 					vis = barchart(data);
 					stat_sig = data.p_value;
-					stat_sig = stat_sig > .95 ? "Yes" : "No"
-					$("#statistic").html("Are these two statistically independent?<span id='stat_answer''>" + stat_sig + "</span>" + data.p_value)
+					stat_sig = stat_sig > .95 ? "Yep - different." : "Nope - not different."
+					$("#statistic").html("P(statistically independent | data) = <span id='stat_answer''>" + data.p_value + "</span> (" + stat_sig + ")")
 					//vis = tm(data);
 					vis.render();
 				}
