@@ -42,8 +42,8 @@
 <div id="contents"></div>
 
 <div id="output" class="output"></div>
-
-{% block content %}{% endblock %}
+<div id="statistic">
+</div>
 
 </div>
 
@@ -59,22 +59,46 @@
 	
 	
 	tm = function(data){
+		function title(d) {
+		  return d.parentNode ? (title(d.parentNode) + "." + d.nodeName) : d.nodeName;
+		}
+		var
+			re = "",
+			data = pv.dom(data).root("data").nodes(),
+			color = pv.Colors.category19().by(function(d) d.parentNode.nodeName);
+		console.log(data);
 		var vis = new pv.Panel()
 			.width(500)
 			.height(500)
 			.canvas("output");
-		var treemap = vis.add(pv.Layout.Treemap)
-			.nodes(data);
-		treemap.leaf.add(pv.Panel)
-			.strokeStyle("#fff")
-			.lineWidth(1)
-			.antialias(false);
+		// var treemap = vis.add(pv.Layout.Treemap)
+		// 			.nodes(data)
+		// 			.round(true);
+		// 		treemap.leaf.add(pv.Panel)
+		// 			.fillStyle(function(d) color(d).alpha(title(d).match(re) ? 1 : .2))
+		// 			.strokeStyle("#fff")
+		// 			.lineWidth(1)
+		// 			.antialias(false);
+		// 		treemap.label.add(pv.Label)
+		// 			.textStyle(function(d) pv.rgb(0, 0, 0, title(d).match(re) ? 1 : .2));
+		var partition = vis.add(pv.Layout.Partition.Fill)
+		    .nodes(data)
+		    .size(function(d) d.nodeValue)
+		    .order("descending")
+		    .orient("radial");
+
+		partition.node.add(pv.Wedge)
+		    .fillStyle(pv.Colors.category19().by(function(d) d.parentNode && d.parentNode.nodeName))
+		    .strokeStyle("#fff")
+		    .lineWidth(.5);
+
+		partition.label.add(pv.Label)
+		    .visible(function(d) d.angle * d.outerRadius >= 6);
 		return vis;
 	}
 	
 	barchart = function(d){
 		data = d.data;
-		
 		
 		var n = data.length;
 		var m = data[0].length;
@@ -154,7 +178,10 @@
 					//console.log("Got data. " + data["os"] + data["gender"]);
 					//console.log(data);
 					vis = barchart(data);
-					
+					stat_sig = data.p_value;
+					stat_sig = stat_sig > .95 ? "Yes" : "No"
+					$("#statistic").html("Are these two statistically independent?<span id='stat_answer''>" + stat_sig + "</span>" + data.p_value)
+					//vis = tm(data);
 					vis.render();
 				}
 			}

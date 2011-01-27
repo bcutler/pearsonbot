@@ -3,7 +3,7 @@ from pprint import pformat
 from django.shortcuts import get_object_or_404, render_to_response
 from django.http import HttpResponse
 
-from helpers import get_contingency_table, chisq_test, get_group_names, get_protovis_treemap
+from helpers import *
 import json
 
 def index(request):
@@ -13,8 +13,10 @@ def compare_with(request):
 	term1 = request.GET.get('term1')
 	term2 = request.GET.get('term2')
 	#print term1, term2
-	table = get_contingency_table(term1,term2)
+	table = fetch_data(term1,term2)
+	table = to_contingency_table(table)
 	#table = get_protovis_treemap(term1, term2)
+	print table
 	#statistic = chisq_test(table)
 	
 	#table = pformat(table)
