@@ -5,13 +5,6 @@ from math import floor
 #####################              Helpers            ########################
 ##############################################################################
 
-def get_group_names(db):
-	c = db.cursor()
-	c.execute("""SELECT DISTINCT gname FROM responses;""")
-	d = c.fetchall()
-	d = [i for (i,) in d]
-	return d
-
 def fetch_data(term1, term2, db):
 	c = db.cursor()
 	c.execute('''SELECT t1.gname AS term1, 

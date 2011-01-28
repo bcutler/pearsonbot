@@ -1,4 +1,5 @@
-from flask import Flask, render_template, request
+from contextlib import closing
+from flask import Flask, render_template, request, g
 from helpers import *
 
 import sqlite3
@@ -10,32 +11,60 @@ import json
 
 app = Flask(__name__)
 
+DATABASE = 'prod.db'
+DEBUG = True
+#SECRET_KEY = 'development key'
+#USERNAME = 'admin'
+#PASSWORD = 'default'
+
+app.config.from_object(__name__)
+
+##############################################################################
+#####################             Database               #####################
+##############################################################################
+
+def connect_db():
+	"""Returns a new connection to the database."""
+	return sqlite3.connect(app.config['DATABASE'])
+
+def sql(fname):
+	with closing(connect_db()) as db:
+		with app.open_resource(fname) as f:
+			db.cursor().executescript(f.read())
+		db.commit()
+
+def init_db():
+	sql("schema.sql")
+
+def test_data():
+	sql("test_data.sql")
+
 ##############################################################################
 #####################            Controllers             #####################
 ##############################################################################
 
+@app.before_request
+def before_request():
+	g.db = connect_db()
+
+@app.after_request
+def after_request(response):
+	g.db.close()
+	return response
+
 @app.route('/')
 def index():
-	db = sqlite3.connect('prod.db')
-	groups = get_group_names(db)
+	c = g.db.execute("""SELECT DISTINCT gname FROM responses;""")
+	groups = [i for (i,) in c.fetchall()]
 	return render_template("index.html", groups = groups)
 
 @app.route('/compare/')
 def compare():
 	term1 = request.args.get('term1')
 	term2 = request.args.get('term2')
-	print "HI!"
-	db = sqlite3.connect('prod.db')
-	table = fetch_data(term1, term2, db)
+	table = fetch_data(term1, term2, g.db)
 	table = to_contingency_table(table)
-	#table = get_protovis_treemap(term1, term2)
-	#print table
-	#statistic = chisq_test(table)
-	
-	#table = pformat(table)
-	#print table
 	res = json.dumps(table)
-	#print res
 	return res
 
 if __name__ == '__main__':
