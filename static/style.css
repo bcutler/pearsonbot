@@ -10,7 +10,7 @@ q:before,q:after { content:''; }
 abbr,acronym { border:0; }
 
 body {
-	font-family:georgia;
+	font-family:trebuchet,helvetica,sans-serif;
 	;
 }
 
@@ -18,7 +18,7 @@ body {
 	margin-top:20px;
 	margin-left:auto;
 	margin-right:auto;
-	width:40em;
+	width:60em;
 }
 
 #header {
@@ -32,9 +32,9 @@ hr {
 }
 
 h1#header {
-	font-size:1.5em;
+	font-size:3em;
 	margin-right:1em;
-	font-weight:normal;
+	font-weight:bold;
 	display:inline;
 	color:black;
 }
@@ -223,9 +223,42 @@ a.activator {
 	text-decoration:underline;
 }
 
+#compare_container {
+	
+}
+
+.compare {
+	color: white;
+	background-color: gray;
+	padding:.35em;
+	padding-left:.5em;
+	padding-right:.5em;
+	margin:.1em;
+}
+
+.with {
+	color: white;
+	background-color: gray;
+	padding: .35em;
+	padding-left: .5em;
+	padding-right: .5em;
+	margin: .1em;
+}
+
+
+.check {
+	padding:.35em;
+	padding-left:.5em;
+	padding-right:.5em;
+	background-color:gray;
+	width:10em;
+	text-align:center;
+	margin-top:.5em;
+	color:white;
+}
 
 a {
-	font-variant:small-caps;;
+	font-variant:small-caps;
 }
 
 a:hover {
@@ -238,18 +271,28 @@ td {
 
 .compare_clicked {
 	color:black;
+	background-color: lightgray;
 	font-variant:normal;
 }
 
 .with_clicked {
 	color:black;
+	background-color: lightgray;
 	font-variant:normal;
+}
+
+.percentage_clicked {
+	color: black;
+	background-color: lightgray;
 }
 
 .with_unavailable {
 	color:lightgray;
 	font-variant:normal;
 }
+
+
+
 
 #stat_answer {
 	padding-left:1em;

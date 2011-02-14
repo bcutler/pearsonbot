@@ -21,7 +21,7 @@ def fetch_data(term1, term2, db):
 	data = c.fetchall()
 	return data
 
-def to_contingency_table(data):
+def to_contingency_table(data, normalized = False):
 	
 	term1 = [t1 for t1, t2, l1, l2, c in data][0]
 	term2 = [t2 for t1, t2, l1, l2, c in data][0]
@@ -33,10 +33,20 @@ def to_contingency_table(data):
 	row_labels = {}
 	col_labels = {}
 	
+	
 	for t1, t2, l1, l2, c in data:
 		if l1 not in row_labels: row_labels[l1] = len(row_labels)
 		if l2 not in col_labels: col_labels[l2] = len(col_labels)
 		data_obj[row_labels[l1]][col_labels[l2]] = c
+	
+	if normalized:
+		data_obj = [[(c / float(sum(r)))*100  for c in r]    for r in data_obj]
+	
+	row_labels = sorted([(v,k) for k,v in row_labels.items()])
+	row_labels = [k for v, k in row_labels]
+	
+	col_labels = sorted([(v, k) for k,v in col_labels.items()])
+	col_labels = [k for v,k in col_labels]
 	
 	obj = {'labels':
 			{

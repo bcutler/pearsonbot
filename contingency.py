@@ -2,6 +2,7 @@ from contextlib import closing
 from flask import Flask, render_template, request, g
 from helpers import *
 
+from pprint import pprint
 import sqlite3
 import json
 
@@ -62,8 +63,11 @@ def index():
 def compare():
 	term1 = request.args.get('term1')
 	term2 = request.args.get('term2')
+	normalized = request.args.get('normalized') == "true"
+	print "normalized?", normalized
 	table = fetch_data(term1, term2, g.db)
-	table = to_contingency_table(table)
+	table = to_contingency_table(table, normalized = normalized)
+	pprint(table)
 	res = json.dumps(table)
 	return res
 

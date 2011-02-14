@@ -15,7 +15,7 @@ def setup():
 	return db
 
 def connect_to_interface():
-	db = sqlite3.connect("../../../testpilot/studies/beta_interface_2/sequence/data/interface_large.db")
+	db = sqlite3.connect("../interface_large.db")
 	return db
 
 
@@ -43,9 +43,9 @@ def add_responses(response_map, c):
 	return [gmap, lmap]
 
 def main():
-	q1 = ["less than 3 months", "3 to 6 months", "6 months to a year", "1 to 2 years", "2 to 3 years", "3 to 5 years", "More than 5 years"]
+	q1 = ["< 3 months", "3 to 6 months", "6 months to a year", "1 to 2 years", "2 to 3 years", "3 to 5 years", "> 5 years"]
 	# Primary browser
-	q4 = ["No others, only Firefox", "Firefox", "Chrome", "Safari", "Opera", "Internet Explorer"]
+	q4 = ["Only Firefox", "Firefox", "Chrome", "Safari", "Opera", "Internet Explorer"]
 	# gender
 	q5 = ["Male", "Female"]
 	#q5 = ["Female", "Male"]
@@ -55,6 +55,9 @@ def main():
 	q7 = ["< 1 hr", "1-2 hrs", "2-4 hrs", "4-6 hrs", "6-8 hrs", "8-10 hrs", "> 10 hrs"]
 	# how would you describe your experience level? scale 1-10
 	q8 = range(0,11)
+	
+	max_num_tabs = []
+	
 
 	responses = {
 		"Firefox usage": q1,
@@ -90,6 +93,7 @@ def main():
 	gmap, lmap = add_responses(responses, c)
 	
 	
+	
 	for (qrow) in c2.execute(query1):
 		#user_id = qrow[0]
 		#qrow = qrow[1:]
@@ -100,6 +104,7 @@ def main():
 		#print spots
 		if len(spots) > 2 and len(qrow) == 15:
 			#print len(qrow)
+			# add this to a user's dict.
 			for comb in permutations(spots, r = 2):
 				if comb not in combs: combs[comb] = 0
 				combs[comb] += 1

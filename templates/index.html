@@ -5,6 +5,7 @@
 	<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 	<script src="{{ url_for('static', filename='jquery.js') }}"></script>
 	<script type="text/javascript" src="{{ url_for('static', filename='protovis.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='jquery.isotope.min.js') }}"></script>
 </head>
 
 <body>
@@ -13,26 +14,33 @@
 
 <div id="title">
 	<h1 id="header">Pearson-Bot</h1>
-	<h2 id="header">Peeling polygons off the hypershape of opinion - bzzzt!!!</h2>
+	<h2 id="header">By Mozilla Labs Test Pilot + Metrics</h2>
 </div>
 <hr>
 
 
 <div id="content">
 
-<table id="compare">
-	<tr>
-		<td>Compare</td>{% for g in groups %} <td id="{{ g }}" class="compare">{{ g }}</td>{% endfor %}
-	</tr>
-	<tr>
-		<td>With</td>{% for g in groups %} <td id="{{ g }}" class="with">{{ g }}</td>{% endfor %}
-	</tr>
-	
-</table>
+<div id="compare_container">
+	{% for g in groups %}
+		<span id="{{ g }}" class="compare">{{ g }}</span>
+	{% endfor %}
+</div>
+
+<div id="with_container">
+	{% for g in groups %}
+		<span id="{{ g }}" class="with">{{ g }}</span>
+	{% endfor %}
+</div>
+
+<div class="check">Use Percentages</div>
+
+<br>
 
 <div id="contents"></div>
 
 <div id="output" class="output"></div>
+
 <div id="statistic">
 </div>
 
@@ -62,16 +70,6 @@
 			.width(500)
 			.height(500)
 			.canvas("output");
-		// var treemap = vis.add(pv.Layout.Treemap)
-		// 			.nodes(data)
-		// 			.round(true);
-		// 		treemap.leaf.add(pv.Panel)
-		// 			.fillStyle(function(d) color(d).alpha(title(d).match(re) ? 1 : .2))
-		// 			.strokeStyle("#fff")
-		// 			.lineWidth(1)
-		// 			.antialias(false);
-		// 		treemap.label.add(pv.Label)
-		// 			.textStyle(function(d) pv.rgb(0, 0, 0, title(d).match(re) ? 1 : .2));
 		var partition = vis.add(pv.Layout.Partition.Fill)
 		    .nodes(data)
 		    .size(function(d) d.nodeValue)
@@ -98,35 +96,23 @@
 		
 		var rl = d.labels.row_labels;
 		var cl = d.labels.col_labels;
-		
-		rl2 = [];
-		for (var r in rl) {
-			rl2.push(r);
-		}
-		
-		cl2 = [];
-		for (var c in cl) {
-			cl2.push(c);
-		}
-		
-		//console.log(rl2);
 		for (var i in data) {
-			for (var j in data[i]) {
-				if (data[i][j] > maxd) {
-					maxd = data[i][j];
+				for (var j in data[i]) {
+					if (data[i][j] > maxd) {
+						maxd = data[i][j];
+					}
 				}
 			}
-		}
-		var w = 500,
-		    h = 250,
-		    x = pv.Scale.linear(0, maxd).range(0, w),
+		var w = 700,
+		    h = n * m * 15,
+		    x = pv.Scale.linear(0, maxd).range(0, w-150),
 		    y = pv.Scale.ordinal(pv.range(n)).splitBanded(0, h, 4/5),
 		    c = pv.Colors.category20();
 		var vis = new pv.Panel()
 			.width(w)
 			.height(h)
 			.bottom(20)
-			.left(60)
+			.left(90)
 			.right(10)
 			.top(5)
 			.canvas("output");
@@ -139,19 +125,21 @@
 			    .top(function() this.index * y.range().band / m)
 			    .height(y.range().band / m)
 			    .left(0)
+			    //.left(x)
+			    //.size(20)
 			    .width(x)
 			    .fillStyle(c.by(pv.index));
 
 			/* The value label. */
 			bar.anchor("right").add(pv.Label)
 			    .textStyle("white")
-			    .text(function(d) d.toFixed(1));
+			    .text(function(d) parseInt(d.toFixed(1)));
 
 			/* The variable label. */
 			bar.parent.anchor("left").add(pv.Label)
 			    .textAlign("right")
 			    .textMargin(5)
-			    .text(function() rl2[this.parent.index]);
+			    .text(function() rl[this.parent.index]);
 
 			/* X-axis ticks. */
 			vis.add(pv.Rule)
@@ -179,7 +167,7 @@
 				.strokeStyle(null)
 				.fillStyle(c.by(pv.index))
 				.anchor("left").add(pv.Label)
-					.text(function() cl2[this.index]);
+					.text(function() cl[this.index]);
 				
 			
 			// vis.anchor("right").add(pv.Label)
@@ -198,23 +186,25 @@
 	}
 	
 	submit_comparison = function(compare_term, with_term){
+		//var n = $("input:checked").length;
+		var normalized = $(".percentage_clicked").attr("class") != undefined;
+		console.log("normalized is" + normalized);
 		$.ajax(
 			{
 				type: 'GET',
 				cache: false,
-				data: {"term1" : compare_term, "term2" : with_term},
+				data: {"term1" : compare_term, "term2" : with_term, "normalized" : normalized},
 				url: "{{ url_for('compare') }}",
-				beforeSend: function(){},
+				beforeSend: function(){
+					
+				},
 				success: function(data){
 					
 					data = $.parseJSON(data);
-					//$("#contents").html("WHAT  " + data.mac.male);
-					//console.log("Got data. " + data["os"] + data["gender"]);
-					//console.log(data);
 					vis = barchart(data);
-					stat_sig = data.p_value;
-					stat_sig = stat_sig > .95 ? "Yep - different." : "Nope - not different."
-					$("#statistic").html("P(statistically independent | data) = <span id='stat_answer''>" + data.p_value + "</span> (" + stat_sig + ")")
+					// stat_sig = data.p_value;
+					// stat_sig = stat_sig > .95 ? "Yep - different." : "Nope - not different."
+					// $("#statistic").html("P(statistically independent | data) = <span id='stat_answer''>" + data.p_value + "</span> (" + stat_sig + ")")
 					//vis = tm(data);
 					vis.render();
 				}
@@ -243,6 +233,7 @@
 			submit_comparison(current_compare, current_with);
 		}
 	})
+	
 	$(".with").click(function(){
 		if (current_with){
 			$(".with_clicked").removeClass("with_clicked");
@@ -258,6 +249,32 @@
 			submit_comparison(current_compare, current_with);
 		}
 	});
+	$(":checkbox").click(function(){
+		current_compare = $(".compare_clicked").attr("id");
+		current_with = $(".with_clicked").attr("id");
+		if (current_with != undefined & current_compare != undefined) {
+			submit_comparison(current_compare, current_with);
+		}
+	})
+	
+	$(".check").click(function(){
+		$(this).toggleClass("percentage_clicked");
+		//console.log($("#check").attr("class"))
+		current_compare = $(".compare_clicked").attr("id");
+		current_with = $(".with_clicked").attr("id");
+		if (current_with != undefined & current_compare != undefined) {
+			submit_comparison(current_compare, current_with);
+		}
+	})
+	
+	$("#compare_container").isotope({
+		itemSelector: ".compare",
+		layoutMode: "fitRows"
+	});
+	$("#with_container").isotope({
+		itemSelector: ".with",
+		layoutMode: "fitRows"
+	})
 	
 </script>
 
