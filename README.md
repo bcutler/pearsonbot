@@ -19,12 +19,6 @@ To pre-load it with fake data, run from the command line
 
 	python; from contingency import init_db, test_data; init_db(); test_data()
 
-To try the app, run
-
-	python contingency.py
-
-to run PearsonBot in a development setting, and you'll have a small example.
-
 Table setup
 -----------
 
