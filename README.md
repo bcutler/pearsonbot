@@ -6,6 +6,14 @@ PearsonBot is small data application that helps you visualize and test simple ca
 Among the many flavors of data we collect at Mozilla, we often found ourselves wondering how to quickly analyze 
 categorical data from surveys and other sources.
 
+This repository comes with a small sqlite3 database with a number of survey and usage features from Test Pilot.  You can run the app locally by
+running
+
+	python contingency.py
+
+and going to http://127.0.0.1:5000.
+
+We also have a fake data representation, but frankly that's not really useful anymore.  
 
 To pre-load it with fake data, run from the command line
 
