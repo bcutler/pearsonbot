@@ -22,8 +22,8 @@ Table setup
 
 The sqlite database setup we use is not the most elegant, but it works.  You will need two tables:
 
-CREATE TABLE contingency(lid1 INT, lid2 INT, count INT);
-CREATE TABLE responses(gid INT, lid INT, gname TEXT, lname TEXT);
+	CREATE TABLE contingency(lid1 INT, lid2 INT, count INT);
+	CREATE TABLE responses(gid INT, lid INT, gname TEXT, lname TEXT);
 
 `responses` is the table that contains all the labeling for the features.  The `gname` column is the group name, 
 while the `lname` column is the label name.  For instance for the `os` group, we might have `mac`, `windows`, and `linux`.
