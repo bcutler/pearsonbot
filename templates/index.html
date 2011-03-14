@@ -21,18 +21,24 @@
 
 <div id="content">
 
+<div id="compare_section">
+	<span class="selector_title">Compare</span>
 <div id="compare_container">
 	{% for g in groups %}
-		<span id="{{ g }}" class="compare">{{ g }}</span>
+		<span id="{{ g }}" class="compare_button">{{ g }}</span>
 	{% endfor %}
 </div>
-
+</div>
+<br>
+<div i='with_section'>
+	<span class="selector_title">With</span>
 <div id="with_container">
+	With
 	{% for g in groups %}
-		<span id="{{ g }}" class="with">{{ g }}</span>
+		<span id="{{ g }}" class="with_button">{{ g }}</span>
 	{% endfor %}
 </div>
-
+</div>
 <div class="check">Use Percentages</div>
 
 <br>
@@ -212,7 +218,7 @@
 		)
 	}
 	
-	$(".compare").click(function(){
+	$(".compare_button").click(function(){
 		//alert("hi " + $(this).html());
 		// remove the old current_compare.
 		if (current_compare) {
@@ -234,7 +240,7 @@
 		}
 	})
 	
-	$(".with").click(function(){
+	$(".with_button").click(function(){
 		if (current_with){
 			$(".with_clicked").removeClass("with_clicked");
 		}
@@ -268,11 +274,11 @@
 	})
 	
 	$("#compare_container").isotope({
-		itemSelector: ".compare",
+		itemSelector: ".compare_button",
 		layoutMode: "fitRows"
 	});
 	$("#with_container").isotope({
-		itemSelector: ".with",
+		itemSelector: ".with_button",
 		layoutMode: "fitRows"
 	})
 	

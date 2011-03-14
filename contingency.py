@@ -2,17 +2,19 @@ from contextlib import closing
 from flask import Flask, render_template, request, g
 from helpers import *
 
-from pprint import pprint
 import sqlite3
 import json
+import os
 
 ##############################################################################
 #####################               Setup                #####################
 ##############################################################################
 
 app = Flask(__name__)
-
-DATABASE = 'prod.db'
+PROJECT_DIR = os.path.abspath(os.path.dirname(__file__)) 
+ROOT = lambda d: os.path.join(PROJECT_DIR, d) 
+ 
+DATABASE = ROOT('prod.db')
 DEBUG = True
 #SECRET_KEY = 'development key'
 #USERNAME = 'admin'
@@ -64,10 +66,8 @@ def compare():
 	term1 = request.args.get('term1')
 	term2 = request.args.get('term2')
 	normalized = request.args.get('normalized') == "true"
-	print "normalized?", normalized
 	table = fetch_data(term1, term2, g.db)
 	table = to_contingency_table(table, normalized = normalized)
-	pprint(table)
 	res = json.dumps(table)
 	return res
 

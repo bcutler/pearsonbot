@@ -15,3 +15,9 @@ To try the app, run
 to run PearsonBot in a development setting.
 
 And you'll have a small example.
+
+
+
+
+NOTES:
+- add a COMPARE and WITH label to the buttons

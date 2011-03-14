@@ -122,9 +122,9 @@ p {
 }
 
 #content {
-	width:75%;
+	width:85%;
 	margin:auto;
-	margin-top:3em;
+	margin-top:1em;
 	margin-bottom:3em;
 }
 
@@ -227,7 +227,23 @@ a.activator {
 	
 }
 
-.compare {
+.selector_title {
+	color: darkgray;
+	background-color: white;
+	padding:.35em;
+	padding-left:.18em;
+	padding-right:.5em;
+	margin:.1em;
+	padding-bottom:.3em;
+	font-weight:bold;
+	font-variant:small-caps;
+	font-size:1.5em;
+}
+
+.compare_button {
+	font-weight:normal;
+	font-variant:normal;
+	font-size:1em;
 	color: white;
 	background-color: gray;
 	padding:.35em;
@@ -236,7 +252,7 @@ a.activator {
 	margin:.1em;
 }
 
-.with {
+.with_button {
 	color: white;
 	background-color: gray;
 	padding: .35em;
@@ -253,7 +269,7 @@ a.activator {
 	background-color:gray;
 	width:10em;
 	text-align:center;
-	margin-top:.5em;
+	margin-top:1em;
 	color:white;
 }
 
@@ -290,9 +306,6 @@ td {
 	color:lightgray;
 	font-variant:normal;
 }
-
-
-
 
 #stat_answer {
 	padding-left:1em;
